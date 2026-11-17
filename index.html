@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="uk" class="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Політична Економія — Тренажер до Контрольної Роботи | Сандугей В.В.</title>
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#eff6ff',
+              100: '#dbeafe',
+              200: '#bfdbfe',
+              500: '#3b82f6',
+              600: '#2563eb',
+              700: '#1d4ed8',
+              800: '#1e40af',
+              900: '#1e3a8a',
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <!-- KaTeX for beautiful math formulas -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"></script>
+
+  <!-- Chart.js for economic curves -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <!-- Canvas Confetti for rewards -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body class="min-h-screen flex flex-col bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 transition-colors duration-200">
+
+  <!-- HEADER -->
+  <header class="sticky top-0 z-40 bg-white/90 dark:bg-slate-800/90 backdrop-blur-md border-b border-slate-200 dark:border-slate-700 shadow-sm">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-16">
+        <!-- Brand & Lecturer -->
+        <div class="flex items-center space-x-3 cursor-pointer" onclick="App.switchTab('home')">
+          <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-600 flex items-center justify-center text-white shadow-md shadow-blue-500/20">
+            <i data-lucide="graduation-cap" class="w-6 h-6"></i>
+          </div>
+          <div>
+            <h1 class="font-bold text-lg leading-tight tracking-tight text-slate-900 dark:text-white flex items-center gap-2">
+              Політична Економія
+              <span class="text-xs px-2 py-0.5 rounded-full bg-blue-100 dark:bg-blue-900/60 text-blue-700 dark:text-blue-300 font-semibold">Контрольна</span>
+            </h1>
+            <p class="text-xs text-slate-500 dark:text-slate-400">Викладач: к.е.н., доц. Сандугей В.В.</p>
+          </div>
+        </div>
+
+        <!-- Right controls: Progress & Theme Toggle -->
+        <div class="flex items-center space-x-4">
+          <div class="hidden md:flex items-center bg-slate-100 dark:bg-slate-700/60 px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-600">
+            <i data-lucide="award" class="w-4 h-4 text-amber-500 mr-2"></i>
+            <span class="text-xs font-medium text-slate-600 dark:text-slate-300">Готовність:</span>
+            <span id="overall-progress-text" class="text-xs font-bold text-blue-600 dark:text-blue-400 ml-1.5">0%</span>
+            <div class="w-16 bg-slate-200 dark:bg-slate-600 h-1.5 rounded-full ml-2 overflow-hidden">
+              <div id="overall-progress-bar" class="bg-blue-600 h-full rounded-full transition-all duration-300" style="width: 0%"></div>
+            </div>
+          </div>
+
+          <button id="theme-toggle" class="p-2 rounded-lg bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600 transition" title="Змінити тему">
+            <i data-lucide="moon" class="w-5 h-5 dark:hidden"></i>
+            <i data-lucide="sun" class="w-5 h-5 hidden dark:block"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Navigation Tabs -->
+      <nav class="flex space-x-1 overflow-x-auto py-2 border-t border-slate-100 dark:border-slate-700/60 scrollbar-none text-sm font-medium">
+        <button onclick="App.switchTab('home')" class="nav-tab active flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 whitespace-nowrap transition" data-tab="home">
+          <i data-lucide="layout-dashboard" class="w-4 h-4"></i> Головна
+        </button>
+        <button onclick="App.switchTab('fib')" class="nav-tab flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 whitespace-nowrap transition" data-tab="fib">
+          <i data-lucide="edit-3" class="w-4 h-4"></i> 1. Пропущене слово
+          <span class="text-[10px] px-1.5 py-0.2 rounded-full bg-blue-100 dark:bg-blue-900/50 text-blue-700 dark:text-blue-300 font-bold ml-1">30</span>
+        </button>
+        <button onclick="App.switchTab('categories')" class="nav-tab flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 whitespace-nowrap transition" data-tab="categories">
+          <i data-lucide="book-open" class="w-4 h-4"></i> 2. Економічні категорії
+          <span class="text-[10px] px-1.5 py-0.2 rounded-full bg-emerald-100 dark:bg-emerald-900/50 text-emerald-700 dark:text-emerald-300 font-bold ml-1">28</span>
+        </button>
+        <button onclick="App.switchTab('matching')" class="nav-tab flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 whitespace-nowrap transition" data-tab="matching">
+          <i data-lucide="git-commit" class="w-4 h-4"></i> 3. Відповідності
+          <span class="text-[10px] px-1.5 py-0.2 rounded-full bg-purple-100 dark:bg-purple-900/50 text-purple-700 dark:text-purple-300 font-bold ml-1">7 ігор</span>
+        </button>
+        <button onclick="App.switchTab('problems')" class="nav-tab flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 whitespace-nowrap transition" data-tab="problems">
+          <i data-lucide="calculator" class="w-4 h-4"></i> 4. Задачі 1–17
+          <span class="text-[10px] px-1.5 py-0.2 rounded-full bg-amber-100 dark:bg-amber-900/50 text-amber-700 dark:text-amber-300 font-bold ml-1">17</span>
+        </button>
+        <button onclick="App.switchTab('formulas')" class="nav-tab flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 whitespace-nowrap transition" data-tab="formulas">
+          <i data-lucide="sigma" class="w-4 h-4"></i> 5. Формули
+        </button>
+        <button onclick="App.switchTab('exam')" class="nav-tab flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-semibold shadow-sm hover:from-blue-700 hover:to-indigo-700 whitespace-nowrap transition ml-2" data-tab="exam">
+          <i data-lucide="sparkles" class="w-4 h-4"></i> Симулятор КР
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <!-- MAIN CONTAINER -->
+  <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
+
+    <!-- 0. TAB: HOME / DASHBOARD -->
+    <section id="view-home" class="tab-view space-y-6">
+      <!-- Welcome Hero -->
+      <div class="relative overflow-hidden rounded-2xl bg-gradient-to-r from-blue-600 via-indigo-600 to-sky-700 text-white p-6 sm:p-8 shadow-xl">
+        <div class="relative z-10 max-w-3xl">
+          <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/20 text-xs font-semibold backdrop-blur-md mb-3">
+            <i data-lucide="book-check" class="w-3.5 h-3.5"></i> Повна відповідність структурі контрольної
+          </span>
+          <h2 class="text-2xl sm:text-3xl font-extrabold tracking-tight">Тренажер контрольної роботи з політекономії</h2>
+          <p class="mt-2 text-sm sm:text-base text-blue-100">
+            Інтерактивний навчальний комплекс за програмою к.е.н., доцента Сандугей В.В. Охоплює всі 10 лекційних тем, 28 фундаментальних категорій, повний розбір усіх 17 семінарських задач та генератор білетів.
+          </p>
+          <div class="mt-6 flex flex-wrap gap-3">
+            <button onclick="App.switchTab('exam')" class="px-5 py-2.5 rounded-xl bg-white text-blue-700 font-bold shadow-md hover:bg-blue-50 transition flex items-center gap-2">
+              <i data-lucide="play-circle" class="w-5 h-5"></i> Спробувати симулятор КР
+            </button>
+            <button onclick="App.switchTab('problems')" class="px-5 py-2.5 rounded-xl bg-blue-700/60 hover:bg-blue-700/80 text-white font-medium backdrop-blur-md transition flex items-center gap-2 border border-white/20">
+              <i data-lucide="calculator" class="w-5 h-5"></i> Розбір 17 задач
+            </button>
+            <button onclick="App.switchTab('formulas')" class="px-5 py-2.5 rounded-xl bg-blue-700/60 hover:bg-blue-700/80 text-white font-medium backdrop-blur-md transition flex items-center gap-2 border border-white/20">
+              <i data-lucide="file-text" class="w-5 h-5"></i> Шпаргалка формул
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Structure of Test Banner -->
+      <div class="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm">
+        <h3 class="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2 mb-4">
+          <i data-lucide="list-checks" class="w-5 h-5 text-blue-600"></i> Структура контрольної роботи та модулі сайту
+        </h3>
+        <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
+          <!-- Item 1 -->
+          <div onclick="App.switchTab('fib')" class="p-4 rounded-xl border border-slate-200 dark:border-slate-700 hover:border-blue-500 dark:hover:border-blue-500 bg-slate-50/50 dark:bg-slate-800/50 cursor-pointer transition group">
+            <div class="w-8 h-8 rounded-lg bg-blue-100 dark:bg-blue-900/60 text-blue-600 dark:text-blue-300 flex items-center justify-center font-bold mb-2">1</div>
+            <h4 class="font-bold text-sm text-slate-800 dark:text-slate-100 group-hover:text-blue-600 transition">Завершити твердження</h4>
+            <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Пропущене слово за лекціями 1–11 (30 завдань із підказками).</p>
+          </div>
+          <!-- Item 2 -->
+          <div onclick="App.switchTab('categories')" class="p-4 rounded-xl border border-slate-200 dark:border-slate-700 hover:border-emerald-500 dark:hover:border-emerald-500 bg-slate-50/50 dark:bg-slate-800/50 cursor-pointer transition group">
+            <div class="w-8 h-8 rounded-lg bg-emerald-100 dark:bg-emerald-900/60 text-emerald-600 dark:text-emerald-300 flex items-center justify-center font-bold mb-2">2</div>
+            <h4 class="font-bold text-sm text-slate-800 dark:text-slate-100 group-hover:text-emerald-600 transition">Дати визначення</h4>
+            <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">28 економічних категорій, інтерактивні флеш-картки.</p>
+          </div>
+          <!-- Item 3 -->
+          <div onclick="App.switchTab('matching')" class="p-4 rounded-xl border border-slate-200 dark:border-slate-700 hover:border-purple-500 dark:hover:border-purple-500 bg-slate-50/50 dark:bg-slate-800/50 cursor-pointer transition group">
+            <div class="w-8 h-8 rounded-lg bg-purple-100 dark:bg-purple-900/60 text-purple-600 dark:text-purple-300 flex items-center justify-center font-bold mb-2">3</div>
+            <h4 class="font-bold text-sm text-slate-800 dark:text-slate-100 group-hover:text-purple-600 transition">Відповідності</h4>
+            <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Вчені, ренти, гроші, інтеграція, цикли, конкуренція.</p>
+          </div>
+          <!-- Item 4 -->
+          <div onclick="App.switchTab('problems')" class="p-4 rounded-xl border border-slate-200 dark:border-slate-700 hover:border-amber-500 dark:hover:border-amber-500 bg-slate-50/50 dark:bg-slate-800/50 cursor-pointer transition group">
+            <div class="w-8 h-8 rounded-lg bg-amber-100 dark:bg-amber-900/60 text-amber-600 dark:text-amber-300 flex items-center justify-center font-bold mb-2">4</div>
+            <h4 class="font-bold text-sm text-slate-800 dark:text-slate-100 group-hover:text-amber-600 transition">Задачі (4–5 шт.)</h4>
+            <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Усі 17 семінарських задач з покроковими розв'язками та калькулятором.</p>
+          </div>
+          <!-- Item 5 -->
+          <div onclick="App.switchTab('formulas')" class="p-4 rounded-xl border border-slate-200 dark:border-slate-700 hover:border-rose-500 dark:hover:border-rose-500 bg-slate-50/50 dark:bg-slate-800/50 cursor-pointer transition group">
+            <div class="w-8 h-8 rounded-lg bg-rose-100 dark:bg-rose-900/60 text-rose-600 dark:text-rose-300 flex items-center justify-center font-bold mb-2">5</div>
+            <h4 class="font-bold text-sm text-slate-800 dark:text-slate-100 group-hover:text-rose-600 transition">Повторити формули</h4>
+            <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Повний математичний довідник, змінні та тест пам'яті.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Topics Covered Grid -->
+      <div class="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm">
+        <h3 class="text-lg font-bold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
+          <i data-lucide="book" class="w-5 h-5 text-indigo-600"></i> Тематичний зміст курсу до контрольної
+        </h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 text-sm">
+          <div class="p-3.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/80">
+            <span class="font-bold text-blue-600 dark:text-blue-400">Тема 1.</span> Предмет і метод політичної економії (школи, Монкретьєн, абстракція, функції).
+          </div>
+          <div class="p-3.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/80">
+            <span class="font-bold text-blue-600 dark:text-blue-400">Тема 2.</span> Економічні потреби, корисність (ютилі, MU, TU), КВМ, фондовіддача, продуктивність.
+          </div>
+          <div class="p-3.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/80">
+            <span class="font-bold text-blue-600 dark:text-blue-400">Тема 3.</span> Економічні відносини власності (тріада прав, приватизація в Україні, типи економічних систем).
+          </div>
+          <div class="p-3.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/80">
+            <span class="font-bold text-blue-600 dark:text-blue-400">Тема 4.</span> Форми суспільного виробництва, товар, двоїстий характер праці, ІРЧ і СНРЧ.
+          </div>
+          <div class="p-3.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/80">
+            <span class="font-bold text-blue-600 dark:text-blue-400">Тема 5.</span> Гроші та грошовий обіг (функції грошей, Фішер M·V=P·Q, реформа 1996 р., 1 грн = 100 000 крб).
+          </div>
+          <div class="p-3.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/80">
+            <span class="font-bold text-blue-600 dark:text-blue-400">Тема 7.</span> Підприємство (Шумпетер), кругооборот капіталу, амортизація, економічний прибуток.
+          </div>
+          <div class="p-3.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/80">
+            <span class="font-bold text-blue-600 dark:text-blue-400">Тема 8.</span> Ринок, закон попиту й пропозиції, рівновага (Qd=Qs), конкуренція, монополія, АМКУ.
+          </div>
+          <div class="p-3.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/80">
+            <span class="font-bold text-blue-600 dark:text-blue-400">Тема 9.</span> Домогосподарства, крива Лоренца, коефіцієнт Джині, державне регулювання.
+          </div>
+          <div class="p-3.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/80">
+            <span class="font-bold text-blue-600 dark:text-blue-400">Тема 10.</span> Доходи: норма m', форми заробітної плати, 4 форми ренти, ціна землі, банківський прибуток.
+          </div>
+          <div class="p-3.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/80">
+            <span class="font-bold text-blue-600 dark:text-blue-400">Тема 10 (Макро).</span> ВВП (3 методи), цикли (Кітчин, Джаглер, Кондрат'єв), безробіття (Оукен), інфляція.
+          </div>
+          <div class="p-3.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/80">
+            <span class="font-bold text-blue-600 dark:text-blue-400">Тема 11.</span> Міжнародні економічні відносини, 5 форм МЕІ, МПП (Сміт, Рікардо), відбудова України.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 1. TAB: FILL IN THE BLANK (ЗАВЕРШИТИ ТВЕРДЖЕННЯ) -->
+    <section id="view-fib" class="tab-view hidden space-y-6">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white dark:bg-slate-800 p-4 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm">
+        <div>
+          <h2 class="text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
+            <i data-lucide="edit-3" class="w-5 h-5 text-blue-600"></i> Завершити твердження (пропущене слово)
+          </h2>
+          <p class="text-xs text-slate-500 dark:text-slate-400">Введіть точне слово/термін або скористайтеся підказкою</p>
+        </div>
+        <div class="flex items-center gap-2">
+          <select id="fib-topic-filter" onchange="App.fib.filterByTopic(this.value)" class="text-xs bg-slate-50 dark:bg-slate-700 border border-slate-300 dark:border-slate-600 rounded-lg p-2 text-slate-800 dark:text-slate-200">
+            <option value="all">Усі теми (30 питань)</option>
+            <option value="Тема 1">Тема 1. Предмет і метод</option>
+            <option value="Тема 2">Тема 2. Потреби і виробництво</option>
+            <option value="Тема 3">Тема 3. Власність та економічні системи</option>
+            <option value="Тема 4">Тема 4. Товарне виробництво і товар</option>
+            <option value="Тема 5">Тема 5. Гроші та грошовий обіг</option>
+            <option value="Тема 7">Тема 7. Підприємство та капітал</option>
+            <option value="Тема 8">Тема 8. Ринок і конкуренція</option>
+            <option value="Тема 9">Тема 9. Суб'єкти ринку</option>
+            <option value="Тема 10">Тема 10. Доходи та макро</option>
+            <option value="Тема 11">Тема 11. Міжнародні відносини</option>
+          </select>
+          <button onclick="App.fib.resetAll()" class="px-3 py-1.5 text-xs rounded-lg border border-slate-300 dark:border-slate-600 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 transition">
+            Скинути
+          </button>
+        </div>
+      </div>
+
+      <!-- Container for FIB cards -->
+      <div id="fib-cards-container" class="space-y-4"></div>
+    </section>
+
+    <!-- 2. TAB: ECONOMIC CATEGORIES & DEFINITIONS -->
+    <section id="view-categories" class="tab-view hidden space-y-6">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white dark:bg-slate-800 p-4 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm">
+        <div>
+          <h2 class="text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
+            <i data-lucide="book-open" class="w-5 h-5 text-emerald-600"></i> Економічні категорії та визначення
+          </h2>
+          <p class="text-xs text-slate-500 dark:text-slate-400">Двосторонні картки: клікніть по картці, щоб побачити визначення</p>
+        </div>
+        <div class="flex items-center gap-2">
+          <input type="text" id="cat-search-input" oninput="App.categories.search(this.value)" placeholder="Пошук категорії..." class="text-xs bg-slate-50 dark:bg-slate-700 border border-slate-300 dark:border-slate-600 rounded-lg px-3 py-2 text-slate-800 dark:text-slate-200 w-44 sm:w-64">
+          <button onclick="App.categories.toggleMode()" id="cat-mode-btn" class="px-3 py-2 text-xs rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-medium transition flex items-center gap-1.5">
+            <i data-lucide="flip-horizontal" class="w-3.5 h-3.5"></i> Режим флеш-карток
+          </button>
+        </div>
+      </div>
+
+      <!-- Categories Container -->
+      <div id="categories-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+    </section>
+
+    <!-- 3. TAB: MATCHING TERMS (ВІДПОВІДНОСТІ) -->
+    <section id="view-matching" class="tab-view hidden space-y-6">
+      <div class="bg-white dark:bg-slate-800 p-4 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <h2 class="text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
+            <i data-lucide="git-commit" class="w-5 h-5 text-purple-600"></i> Відповідності по термінам
+          </h2>
+          <p class="text-xs text-slate-500 dark:text-slate-400">Оберіть тему нижче. Натисніть на термін зліва, а потім на відповідне визначення справа.</p>
+        </div>
+        <div class="flex items-center gap-2">
+          <select id="matching-game-select" onchange="App.matching.loadGame(this.value)" class="text-xs bg-slate-50 dark:bg-slate-700 border border-slate-300 dark:border-slate-600 rounded-lg p-2 text-slate-800 dark:text-slate-200 font-medium">
+            <!-- options populated via JS -->
+          </select>
+          <button onclick="App.matching.restartCurrentGame()" class="px-3 py-2 text-xs rounded-lg bg-purple-600 hover:bg-purple-700 text-white font-medium transition flex items-center gap-1">
+            <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i> Спочатку
+          </button>
+        </div>
+      </div>
+
+      <!-- Matching Play Area -->
+      <div id="matching-play-area" class="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm space-y-6">
+        <div class="flex items-center justify-between border-b border-slate-200 dark:border-slate-700 pb-3">
+          <div>
+            <h3 id="match-game-title" class="text-lg font-bold text-slate-900 dark:text-white"></h3>
+            <p id="match-game-desc" class="text-xs text-slate-500 dark:text-slate-400"></p>
+          </div>
+          <div class="flex items-center gap-2 text-xs">
+            <span class="text-slate-500 dark:text-slate-400">Знайдено:</span>
+            <span id="match-score" class="font-bold text-purple-600 dark:text-purple-400 text-sm">0 / 0</span>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <!-- Left Column -->
+          <div class="space-y-3">
+            <h4 class="text-xs font-bold uppercase tracking-wider text-slate-400">Термін / Категорія / Вчений</h4>
+            <div id="matching-left-list" class="space-y-2.5"></div>
+          </div>
+          <!-- Right Column -->
+          <div class="space-y-3">
+            <h4 class="text-xs font-bold uppercase tracking-wider text-slate-400">Значення / Ознака / Концепція</h4>
+            <div id="matching-right-list" class="space-y-2.5"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4. TAB: PROBLEMS (ЗАДАЧІ 1–17) -->
+    <section id="view-problems" class="tab-view hidden space-y-6">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white dark:bg-slate-800 p-4 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm">
+        <div>
+          <h2 class="text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
+            <i data-lucide="calculator" class="w-5 h-5 text-amber-600"></i> Семінарські задачі (усі 17 варіантів)
+          </h2>
+          <p class="text-xs text-slate-500 dark:text-slate-400">На контрольній роботі буде 4–5 типових задач із цього списку!</p>
+        </div>
+        <div class="flex items-center gap-2">
+          <select id="problem-selector" onchange="App.problems.selectProblem(this.value)" class="text-xs bg-slate-50 dark:bg-slate-700 border border-slate-300 dark:border-slate-600 rounded-lg p-2 text-slate-800 dark:text-slate-200 max-w-xs font-medium">
+            <!-- Filled via JS -->
+          </select>
+        </div>
+      </div>
+
+      <!-- Single Problem Interactive View -->
+      <div id="problem-detail-container" class="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm space-y-6">
+        <!-- Rendered by JS -->
+      </div>
+    </section>
+
+    <!-- 5. TAB: FORMULAS -->
+    <section id="view-formulas" class="tab-view hidden space-y-6">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white dark:bg-slate-800 p-4 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm no-print">
+        <div>
+          <h2 class="text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
+            <i data-lucide="sigma" class="w-5 h-5 text-rose-600"></i> Довідник та шпаргалка формул
+          </h2>
+          <p class="text-xs text-slate-500 dark:text-slate-400">Усі розрахункові формули курсу політекономії з розшифровкою кожної змінної</p>
+        </div>
+        <div class="flex items-center gap-2">
+          <button onclick="window.print()" class="px-3.5 py-2 text-xs rounded-lg bg-slate-800 hover:bg-slate-900 dark:bg-slate-700 dark:hover:bg-slate-600 text-white font-medium transition flex items-center gap-1.5 shadow-sm">
+            <i data-lucide="printer" class="w-4 h-4"></i> Друк шпаргалки
+          </button>
+        </div>
+      </div>
+
+      <div id="formulas-list-container" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <!-- Rendered via JS -->
+      </div>
+    </section>
+
+    <!-- 6. TAB: EXAM SIMULATOR (СИМУЛЯТОР КОНТРОЛЬНОЇ РОБОТИ) -->
+    <section id="view-exam" class="tab-view hidden space-y-6">
+      <!-- Exam Welcome Banner -->
+      <div id="exam-intro" class="bg-white dark:bg-slate-800 p-6 sm:p-8 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm space-y-6">
+        <div class="max-w-2xl">
+          <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-100 dark:bg-blue-900/60 text-blue-700 dark:text-blue-300 text-xs font-bold mb-3">
+            <i data-lucide="shield-check" class="w-4 h-4"></i> Офіційний регламент контрольної
+          </div>
+          <h2 class="text-2xl font-extrabold text-slate-900 dark:text-white">Симулятор контрольної роботи з політекономії</h2>
+          <p class="mt-2 text-sm text-slate-600 dark:text-slate-300">
+            Генератор формує індивідуальний варіант (білет) за точною структурою контрольної роботи викладача Сандугей В.В.:
+          </p>
+          <ul class="mt-3 space-y-1.5 text-xs text-slate-600 dark:text-slate-300 list-disc list-inside">
+            <li><strong>Частина 1:</strong> Завершити твердження (3 тестові завдання з пропущеними словами).</li>
+            <li><strong>Частина 2:</strong> Дати визначення (2 економічні категорії з детальним описом).</li>
+            <li><strong>Частина 3:</strong> Відповідності по термінах (блок із 4 пар).</li>
+            <li><strong>Частина 4:</strong> Практичні задачі (4–5 задач, відібрані випадковим чином з 17 задач семінару).</li>
+            <li><strong>Частина 5:</strong> Повторити формули (3 завдання на знання економічних формул).</li>
+          </ul>
+        </div>
+
+        <div class="flex flex-wrap items-center gap-4 pt-4 border-t border-slate-200 dark:border-slate-700">
+          <div class="flex items-center gap-2">
+            <label class="text-xs font-semibold text-slate-700 dark:text-slate-300">Таймер контрольної:</label>
+            <select id="exam-timer-select" class="text-xs bg-slate-50 dark:bg-slate-700 border border-slate-300 dark:border-slate-600 rounded-lg p-2 text-slate-800 dark:text-slate-200">
+              <option value="45">45 хвилин (стандарт)</option>
+              <option value="60">60 хвилин</option>
+              <option value="30">30 хвилин (швидкий тест)</option>
+              <option value="0">Без таймера</option>
+            </select>
+          </div>
+          <button onclick="App.exam.start()" class="px-6 py-3 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold text-sm shadow-lg shadow-blue-500/25 transition flex items-center gap-2">
+            <i data-lucide="play" class="w-4 h-4"></i> Згенерувати білет і розпочати контрольну
+          </button>
+        </div>
+      </div>
+
+      <!-- Active Exam Interface -->
+      <div id="exam-active-panel" class="hidden space-y-6">
+        <!-- Floating Exam Header with Timer, Calculator & Submit -->
+        <div class="sticky top-20 z-30 bg-white/95 dark:bg-slate-800/95 backdrop-blur-md p-3.5 sm:p-4 rounded-xl border border-blue-200 dark:border-blue-900/60 shadow-md flex items-center justify-between gap-2 sm:gap-4">
+          <div class="flex items-center gap-2 sm:gap-3">
+            <div class="w-8 h-8 sm:w-9 h-9 rounded-lg bg-blue-100 dark:bg-blue-900/50 text-blue-600 dark:text-blue-300 flex items-center justify-center font-bold">
+              <i data-lucide="clock" class="w-4 h-4 sm:w-5 h-5"></i>
+            </div>
+            <div>
+              <div class="text-[11px] sm:text-xs text-slate-500 dark:text-slate-400">Час до завершення:</div>
+              <div id="exam-timer-display" class="font-mono font-bold text-base sm:text-lg text-blue-600 dark:text-blue-400">45:00</div>
+            </div>
+          </div>
+          <div class="flex items-center gap-2">
+            <button type="button" onclick="App.calc.toggle(true)" class="px-3 sm:px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs sm:text-sm transition flex items-center gap-1.5 shadow-md shadow-indigo-600/20" title="Відкрити калькулятор (Alt+C)">
+              <i data-lucide="calculator" class="w-4 h-4"></i>
+              <span>Калькулятор</span>
+            </button>
+            <button onclick="App.exam.finish()" class="px-3.5 sm:px-5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs sm:text-sm transition flex items-center gap-1.5 shadow-md shadow-emerald-600/20">
+              <i data-lucide="check-circle" class="w-4 h-4"></i>
+              <span class="hidden sm:inline">Здати контрольну роботу</span>
+              <span class="sm:hidden">Здати КР</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Exam Paper Content (Generated by JS) -->
+        <div id="exam-ticket-content" class="space-y-6"></div>
+      </div>
+
+      <!-- Exam Results Summary Modal / Card -->
+      <div id="exam-result-panel" class="hidden bg-white dark:bg-slate-800 p-6 sm:p-8 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-xl space-y-6">
+        <!-- Filled by JS -->
+      </div>
+    </section>
+
+  </main>
+
+  <!-- FLOATING CALCULATOR WIDGET -->
+  <div id="calculator-widget-container">
+    <!-- Trigger Button -->
+    <button id="floating-calc-btn" onclick="App.calc.toggle()" class="fixed bottom-6 right-6 z-50 flex items-center gap-2.5 px-4 py-3 rounded-2xl bg-gradient-to-r from-blue-600 via-indigo-600 to-blue-700 hover:from-blue-700 hover:to-indigo-800 text-white font-bold text-sm shadow-xl transition-all border border-white/20 cursor-pointer group" title="Економічний калькулятор (Alt+C або C)">
+      <i data-lucide="calculator" class="w-5 h-5 group-hover:rotate-12 transition-transform"></i>
+      <span class="hidden sm:inline">Калькулятор</span>
+      <span class="text-[10px] bg-white/20 px-1.5 py-0.5 rounded font-mono">Alt+C</span>
+    </button>
+
+    <!-- Calculator Popup Window -->
+    <div id="calculator-window" class="hidden fixed bottom-20 right-4 sm:right-6 z-50 w-80 sm:w-88 bg-white dark:bg-slate-800 rounded-3xl border border-slate-200 dark:border-slate-700 shadow-2xl overflow-hidden flex flex-col transition-all duration-300">
+      <!-- Calc Window Header -->
+      <div class="px-4 py-3 bg-slate-100 dark:bg-slate-700/60 border-b border-slate-200 dark:border-slate-700 flex items-center justify-between select-none">
+        <div class="flex items-center gap-2">
+          <i data-lucide="calculator" class="w-4 h-4 text-blue-600 dark:text-blue-400"></i>
+          <span class="text-xs font-bold text-slate-800 dark:text-slate-100">Економічний калькулятор</span>
+        </div>
+        <div class="flex items-center gap-1">
+          <button onclick="App.calc.clearHistory()" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-1 rounded text-[11px]" title="Очистити історію">
+            <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+          </button>
+          <button onclick="App.calc.toggle()" class="text-slate-400 hover:text-red-500 p-1 rounded" title="Закрити">
+            <i data-lucide="x" class="w-4 h-4"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Context Target Action Bar (for exams and problem inputs) -->
+      <div id="calc-target-action" class="hidden px-3.5 py-2 bg-indigo-50 dark:bg-indigo-950/60 border-b border-indigo-200 dark:border-indigo-800/60 flex items-center justify-between text-xs animate-fadeIn">
+        <div class="flex items-center gap-1.5 text-indigo-900 dark:text-indigo-200 font-semibold truncate">
+          <i data-lucide="arrow-down-right" class="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400"></i>
+          <span id="calc-target-label" class="truncate">Для розрахунку задачі</span>
+        </div>
+        <button type="button" onclick="App.calc.insertIntoTarget()" class="px-2.5 py-1 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-[11px] transition shrink-0 flex items-center gap-1 shadow-sm">
+          <span>Вставити відповідь ↵</span>
+        </button>
+      </div>
+
+      <!-- Calc Display Screen -->
+      <div class="p-4 bg-slate-900 text-right select-all">
+        <div id="calc-history" class="text-xs text-slate-400 font-mono h-5 overflow-hidden text-ellipsis whitespace-nowrap"></div>
+        <div id="calc-display" class="calc-display text-2xl sm:text-3xl font-bold text-white tracking-wider overflow-x-auto whitespace-nowrap scrollbar-none py-1">0</div>
+      </div>
+
+      <!-- Quick Economic Presets -->
+      <div class="px-3 py-2 bg-slate-50 dark:bg-slate-900/40 border-b border-slate-200 dark:border-slate-700 flex gap-1.5 overflow-x-auto text-[11px] font-semibold text-slate-600 dark:text-slate-300 scrollbar-none">
+        <button onclick="App.calc.insertOp('%')" class="px-2 py-1 rounded-md bg-slate-200 dark:bg-slate-700 hover:bg-blue-100 dark:hover:bg-blue-900 hover:text-blue-600 transition" title="Відсоток">%</button>
+        <button onclick="App.calc.formulaShortcut('percentChange')" class="px-2 py-1 rounded-md bg-slate-200 dark:bg-slate-700 hover:bg-blue-100 dark:hover:bg-blue-900 hover:text-blue-600 transition" title="Темп зміни: ((A - B) / B) * 100">Δ%</button>
+        <button onclick="App.calc.formulaShortcut('reciprocal')" class="px-2 py-1 rounded-md bg-slate-200 dark:bg-slate-700 hover:bg-blue-100 dark:hover:bg-blue-900 hover:text-blue-600 transition" title="Обернене число: 1 / x">1/x</button>
+        <button onclick="App.calc.formulaShortcut('sqrt')" class="px-2 py-1 rounded-md bg-slate-200 dark:bg-slate-700 hover:bg-blue-100 dark:hover:bg-blue-900 hover:text-blue-600 transition" title="Квадратний корінь">√</button>
+      </div>
+
+      <!-- Keypad Grid -->
+      <div class="p-3 grid grid-cols-4 gap-2 text-sm font-semibold select-none">
+        <button onclick="App.calc.clear()" class="calc-btn p-2.5 rounded-xl bg-red-100 dark:bg-red-950/60 text-red-600 dark:text-red-400 hover:bg-red-200">C</button>
+        <button onclick="App.calc.backspace()" class="calc-btn p-2.5 rounded-xl bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-200">⌫</button>
+        <button onclick="App.calc.insertText('(')" class="calc-btn p-2.5 rounded-xl bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-200">(</button>
+        <button onclick="App.calc.insertText(')')" class="calc-btn p-2.5 rounded-xl bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-200">)</button>
+
+        <button onclick="App.calc.insertDigit('7')" class="calc-btn p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white hover:bg-slate-200 dark:hover:bg-slate-700">7</button>
+        <button onclick="App.calc.insertDigit('8')" class="calc-btn p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white hover:bg-slate-200 dark:hover:bg-slate-700">8</button>
+        <button onclick="App.calc.insertDigit('9')" class="calc-btn p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white hover:bg-slate-200 dark:hover:bg-slate-700">9</button>
+        <button onclick="App.calc.insertOp('/')" class="calc-btn p-2.5 rounded-xl bg-blue-100 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 hover:bg-blue-200">÷</button>
+
+        <button onclick="App.calc.insertDigit('4')" class="calc-btn p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white hover:bg-slate-200 dark:hover:bg-slate-700">4</button>
+        <button onclick="App.calc.insertDigit('5')" class="calc-btn p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white hover:bg-slate-200 dark:hover:bg-slate-700">5</button>
+        <button onclick="App.calc.insertDigit('6')" class="calc-btn p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white hover:bg-slate-200 dark:hover:bg-slate-700">6</button>
+        <button onclick="App.calc.insertOp('*')" class="calc-btn p-2.5 rounded-xl bg-blue-100 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 hover:bg-blue-200">×</button>
+
+        <button onclick="App.calc.insertDigit('1')" class="calc-btn p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white hover:bg-slate-200 dark:hover:bg-slate-700">1</button>
+        <button onclick="App.calc.insertDigit('2')" class="calc-btn p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white hover:bg-slate-200 dark:hover:bg-slate-700">2</button>
+        <button onclick="App.calc.insertDigit('3')" class="calc-btn p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white hover:bg-slate-200 dark:hover:bg-slate-700">3</button>
+        <button onclick="App.calc.insertOp('-')" class="calc-btn p-2.5 rounded-xl bg-blue-100 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 hover:bg-blue-200">−</button>
+
+        <button onclick="App.calc.toggleSign()" class="calc-btn p-2.5 rounded-xl bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-200">±</button>
+        <button onclick="App.calc.insertDigit('0')" class="calc-btn p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white hover:bg-slate-200 dark:hover:bg-slate-700">0</button>
+        <button onclick="App.calc.insertDot()" class="calc-btn p-2.5 rounded-xl bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-200">,</button>
+        <button onclick="App.calc.insertOp('+')" class="calc-btn p-2.5 rounded-xl bg-blue-100 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 hover:bg-blue-200">+</button>
+      </div>
+
+      <!-- Big Equal Button -->
+      <div class="px-3 pb-3">
+        <button onclick="App.calc.calculate()" class="calc-btn w-full py-3 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold text-base shadow-md transition">
+          =
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer class="bg-white dark:bg-slate-800 border-t border-slate-200 dark:border-slate-700 py-6 mt-12 text-center text-xs text-slate-500 dark:text-slate-400 no-print">
+    <div class="max-w-7xl mx-auto px-4">
+      <p class="font-medium">Підготовка до контрольної роботи з курсу «Політична економія»</p>
+      <p class="mt-1">Кафедра економічної теорії • Викладач: к.е.н., доц. Сандугей Валентина Василівна</p>
+      <p class="mt-2 text-slate-400 dark:text-slate-500">Створено для успішного складання та максимального балу 🎓</p>
+    </div>
+  </footer>
+
+  <!-- App Logic Scripts -->
+  <script src="js/data.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

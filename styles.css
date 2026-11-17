@@ -1,0 +1,189 @@
+/* Custom Styles for Political Economy Exam Prep App */
+
+:root {
+  --primary: #3b82f6;
+  --primary-hover: #2563eb;
+  --accent: #f59e0b;
+  --success: #10b981;
+  --danger: #ef4444;
+  --bg-main: #f8fafc;
+  --card-bg: #ffffff;
+  --text-main: #1e293b;
+  --text-muted: #64748b;
+  --border-color: #e2e8f0;
+}
+
+.dark {
+  --primary: #60a5fa;
+  --primary-hover: #3b82f6;
+  --accent: #fbbf24;
+  --success: #34d399;
+  --danger: #f87171;
+  --bg-main: #0f172a;
+  --card-bg: #1e293b;
+  --text-main: #f1f5f9;
+  --text-muted: #94a3b8;
+  --border-color: #334155;
+}
+
+body {
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  background-color: var(--bg-main);
+  color: var(--text-main);
+  transition: background-color 0.25s ease, color 0.25s ease;
+}
+
+/* 3D Flashcard flip styles */
+.perspective-1000 {
+  perspective: 1000px;
+}
+
+.transform-style-preserve-3d {
+  transform-style: preserve-3d;
+}
+
+.backface-hidden {
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+.rotate-y-180 {
+  transform: rotateY(180deg);
+}
+
+.card-flip-inner {
+  transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.card-flipped .card-flip-inner {
+  transform: rotateY(180deg);
+}
+
+/* Matching game styles */
+.match-item {
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+  user-select: none;
+}
+
+.match-item:hover:not(.matched) {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15);
+}
+
+.match-item.selected {
+  border-color: #3b82f6 !important;
+  background-color: rgba(59, 130, 246, 0.1) !important;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3);
+}
+
+.match-item.matched {
+  border-color: #10b981 !important;
+  background-color: rgba(16, 185, 129, 0.1) !important;
+  opacity: 0.75;
+  cursor: default;
+}
+
+.match-item.wrong {
+  animation: shake 0.4s ease-in-out;
+  border-color: #ef4444 !important;
+  background-color: rgba(239, 68, 68, 0.1) !important;
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20%, 60% { transform: translateX(-6px); }
+  40%, 80% { transform: translateX(6px); }
+}
+
+/* Pulse animation for key badges */
+@keyframes softPulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.85; transform: scale(1.03); }
+}
+
+.soft-pulse {
+  animation: softPulse 2s infinite ease-in-out;
+}
+
+/* Print styling for Formula Sheet */
+@media print {
+  body {
+    background: white !important;
+    color: black !important;
+  }
+  
+  header, nav, #theme-toggle-btn, .no-print, button:not(.print-allow) {
+    display: none !important;
+  }
+  
+  .print-only {
+    display: block !important;
+  }
+  
+  .formula-card {
+    page-break-inside: avoid;
+    border: 1px solid #ccc !important;
+    box-shadow: none !important;
+    margin-bottom: 12px !important;
+  }
+  
+  #formulas-view {
+    display: block !important;
+  }
+}
+
+/* Custom scrollbars */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background: #475569;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* KaTeX inline polish */
+.katex-display {
+  margin: 0.5em 0 !important;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 4px 0;
+}
+
+/* Floating Calculator Widget Styles */
+#floating-calc-btn {
+  box-shadow: 0 10px 25px -5px rgba(59, 130, 246, 0.4), 0 8px 10px -6px rgba(59, 130, 246, 0.3);
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+#floating-calc-btn:hover {
+  transform: translateY(-3px) scale(1.05);
+}
+
+.calc-btn {
+  transition: all 0.15s ease;
+  user-select: none;
+}
+
+.calc-btn:active {
+  transform: scale(0.92);
+}
+
+.calc-display {
+  font-family: 'Courier New', Courier, monospace;
+}
+
